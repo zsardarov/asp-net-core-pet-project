@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
 using Domain;
 using MediatR;
 using Persistence;
@@ -8,28 +9,33 @@ namespace Application.Activities
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity Activity { get; set; }
         }
-    }
 
-    public class Handler : IRequestHandler<Create.Command>
-    {
-        private readonly DataContext _context;
+        public class Handler : IRequestHandler<Command, Result<Unit>>
+        {
+            private readonly DataContext _context;
             
-        public Handler(DataContext context)
-        {
-            _context = context;
-        }
+            public Handler(DataContext context)
+            {
+                _context = context;
+            }
         
-        public async Task<Unit> Handle(Create.Command request, CancellationToken cancellationToken)
-        {
-            _context.Add(request.Activity);
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            {
+                _context.Add(request.Activity);
 
-            await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync() > 0;
 
-            return Unit.Value;
+                if (!result)
+                {
+                    return Result<Unit>.Failure("Failed to create activity");
+                }
+
+                return Result<Unit>.Success(Unit.Value);
+            }
         }
     }
 }
