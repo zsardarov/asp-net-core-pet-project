@@ -31,9 +31,9 @@ namespace API
                     opt.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .AddFluentValidation(config =>
-            {
-                config.RegisterValidatorsFromAssemblyContaining<Create>();
-            });
+                {
+                    config.RegisterValidatorsFromAssemblyContaining<Create>();
+                });
 
             services.AddServices(_config);
             services.AddIdentityServices(_config);
