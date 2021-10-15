@@ -1,14 +1,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
-using AutoMapper;
+using Application.Interfaces;
 using Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Activities
+namespace Application.Activities.UseCases
 {
-    public class Edit
+    public class Create
     {
         public class Command : IRequest<Result<Unit>>
         {
@@ -18,32 +19,36 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
                 _context = context;
-                _mapper = mapper;
+                _userAccessor = userAccessor;
             }
-            
+        
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await _context.Activities.FindAsync(request.Activity.Id);
+                var user = await _context.Users.FirstOrDefaultAsync(user => user.UserName == _userAccessor.GetUsername());
 
-                if (activity == null)
+                var attendee = new ActivityAttendee
                 {
-                    return null; 
-                }
+                    Activity = request.Activity,
+                    User = user,
+                    IsHost = true
+                };
                 
-                _mapper.Map(request.Activity, activity);
+                request.Activity.Attendees.Add(attendee);
+                
+                _context.Add(request.Activity);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
                 if (!result)
                 {
-                    return Result<Unit>.Failure("Failed to update activity");
+                    return Result<Unit>.Failure("Failed to create activity");
                 }
-                
+
                 return Result<Unit>.Success(Unit.Value);
             }
         }

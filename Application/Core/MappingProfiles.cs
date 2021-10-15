@@ -17,11 +17,17 @@ namespace Application.Core
                         opt.MapFrom(source =>
                             source.Attendees.FirstOrDefault(attendee => attendee.IsHost).User.DisplayName);
                     });
-            CreateMap<ActivityAttendee, Profiles.Profile>()
+            CreateMap<ActivityAttendee, AttendeeDto>()
                 .ForMember(destination => destination.DisplayName,
-                    opt => { opt.MapFrom(source => source.User.DisplayName); })
-                .ForMember(destination => destination.Username, opt => { opt.MapFrom(source => source.User.UserName); })
-                .ForMember(destination => destination.Bio, opt => { opt.MapFrom(source => source.User.Bio); });
+                    opt => opt.MapFrom(source => source.User.DisplayName))
+                .ForMember(destination => destination.Username, opt => opt.MapFrom(source => source.User.UserName))
+                .ForMember(destination => destination.Bio, opt => opt.MapFrom(source => source.User.Bio))
+                .ForMember(destination => destination.Image,
+                    opt => opt.MapFrom(source => source.User.Photos.FirstOrDefault(photo => photo.IsMain).Url));
+
+            CreateMap<User, Profiles.Profile>()
+                .ForMember(destination => destination.Image,
+                    opt => opt.MapFrom(source => source.Photos.FirstOrDefault(photo => photo.IsMain).Url));
         }
     }
 }

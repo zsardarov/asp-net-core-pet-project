@@ -5,7 +5,7 @@ using Application.Core;
 using MediatR;
 using Persistence;
 
-namespace Application.Activities
+namespace Application.Activities.UseCases
 {
     public class Delete
     {

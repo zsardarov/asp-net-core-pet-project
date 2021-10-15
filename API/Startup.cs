@@ -1,6 +1,7 @@
 using API.Extensions;
 using API.Middleware;
 using Application.Activities;
+using Application.Activities.UseCases;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

@@ -30,6 +30,11 @@ namespace API.Controllers
                 return GetResponseByStatusCode(expectedStatusCode, result.Value);
             }
 
+            if (!result.IsSuccess && result.Error != null)
+            {
+                return BadRequest(result);
+            }
+            
             return BadRequest();
         }
 
