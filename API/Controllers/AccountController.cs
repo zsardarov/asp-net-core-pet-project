@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
-{   
+{
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
@@ -19,7 +19,7 @@ namespace API.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<User> userManager, 
+        public AccountController(UserManager<User> userManager,
             SignInManager<User> signInManager, TokenService tokenService)
         {
             _userManager = userManager;
@@ -59,6 +59,7 @@ namespace API.Controllers
             {
                 return BadRequest("Email already taken");
             }
+
             if (await _userManager.Users.AnyAsync(user => user.UserName == registerDto.Username))
             {
                 return BadRequest("Username already taken");
@@ -88,7 +89,7 @@ namespace API.Controllers
             var user = await _userManager.Users
                 .Include(user => user.Photos)
                 .FirstOrDefaultAsync(user => user.Email == User.FindFirstValue(ClaimTypes.Email));
-            
+
             return CreateUserDto(user);
         }
 
@@ -103,5 +104,4 @@ namespace API.Controllers
             };
         }
     }
-    
 }

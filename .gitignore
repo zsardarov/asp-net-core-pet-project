@@ -439,7 +439,7 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-*.db
+*.db*
 
 # Windows shortcuts
 *.lnk

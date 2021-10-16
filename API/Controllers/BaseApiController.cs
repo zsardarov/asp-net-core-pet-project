@@ -19,7 +19,7 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            
+
             if (result.IsSuccess && result.Value == null)
             {
                 return NotFound();
@@ -34,7 +34,7 @@ namespace API.Controllers
             {
                 return BadRequest(result);
             }
-            
+
             return BadRequest();
         }
 

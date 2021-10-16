@@ -26,9 +26,15 @@ namespace API
             {
                 var context = services.GetRequiredService<DataContext>();
                 var userManager = services.GetRequiredService<UserManager<User>>();
+
+                var env = services.GetRequiredService<IWebHostEnvironment>();
                 
                 await context.Database.MigrateAsync();
-                await Seed.SeedData(context, userManager);
+                
+                if (env.IsDevelopment())
+                {
+                    await Seed.SeedData(context, userManager);
+                }
             }
             catch (Exception e)
             {

@@ -19,7 +19,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetActivity(Guid id)
         {
-            return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
+            return HandleResult(await Mediator.Send(new Details.Query {Id = id}));
         }
 
         [HttpPost]
@@ -33,7 +33,7 @@ namespace API.Controllers
         public async Task<IActionResult> EditActivity(Guid id, Activity activity)
         {
             activity.Id = id;
-            
+
             return HandleResult(await Mediator.Send(new Edit.Command {Activity = activity}), 204);
         }
 
