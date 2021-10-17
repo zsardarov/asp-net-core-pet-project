@@ -17,7 +17,7 @@ namespace Application.Core
                     opt =>
                     {
                         opt.MapFrom(source =>
-                            source.Attendees.FirstOrDefault(attendee => attendee.IsHost).User.DisplayName);
+                            source.Attendees.FirstOrDefault(attendee => attendee.IsHost).User.UserName);
                     });
             CreateMap<ActivityAttendee, AttendeeDto>()
                 .ForMember(destination => destination.DisplayName,
