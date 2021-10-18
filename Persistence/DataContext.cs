@@ -45,12 +45,12 @@ namespace Persistence
             builder.Entity<UserFollowing>().HasOne(u => u.Observer)
                 .WithMany(observer => observer.Followings)
                 .HasForeignKey(u => u.ObserverId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             
             builder.Entity<UserFollowing>().HasOne(u => u.Target)
                 .WithMany(observer => observer.Followers)
                 .HasForeignKey(u => u.TargetId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
