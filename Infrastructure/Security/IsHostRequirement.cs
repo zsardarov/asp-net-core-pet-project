@@ -25,7 +25,6 @@ namespace Infrastructure.Security
             _httpContextAccessor = httpContextAccessor;
         }
         
-        
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsHostRequirement requirement)
         {
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -38,7 +37,6 @@ namespace Infrastructure.Security
             var activityId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues.
                 SingleOrDefault(route => route.Key == "id").Value?.ToString());
 
-            // var attendee = _context.ActivityAttendees.FindAsync(userId, activityId).Result;
 
             var attendee = _context.ActivityAttendees
                 .AsNoTracking()

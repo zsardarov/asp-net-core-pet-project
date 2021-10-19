@@ -51,6 +51,14 @@ namespace Persistence
                 .WithMany(observer => observer.Followers)
                 .HasForeignKey(u => u.TargetId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<RefreshToken>()
+                .ToTable("RefreshTokens");
+            
+            builder.Entity<RefreshToken>()
+                .HasOne(token => token.User)
+                .WithMany(user => user.RefreshTokens)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

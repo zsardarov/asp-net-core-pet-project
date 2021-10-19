@@ -1,3 +1,5 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -5,6 +7,7 @@ using API.DTOs;
 using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,10 +47,39 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
+                await SetRefreshToken(user);
                 return CreateUserDto(user);
             }
 
             return Unauthorized();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refreshTokens")]
+        public async Task<IActionResult> RefreshTokens()
+        {
+            var refreshToken = Request.Cookies["RefreshToken"];
+            var userId = _tokenService.Validate(refreshToken);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.Users.Include(user => user.RefreshTokens)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            var refreshTokenEntity = user.RefreshTokens
+                .FirstOrDefault(t => t.Token == refreshToken);
+
+            if (refreshTokenEntity == null)
+            {
+                return Unauthorized();
+            }
+
+            user.RefreshTokens.Remove(refreshTokenEntity);
+
+            await SetRefreshToken(user);
+            return Ok(new {Token = _tokenService.CreateAccessToken(user)});
         }
 
         [AllowAnonymous]
@@ -93,6 +125,22 @@ namespace API.Controllers
             return CreateUserDto(user);
         }
 
+        private async Task SetRefreshToken(User user)
+        {
+            var refreshToken = _tokenService.CreateFreshToken(user);
+            
+            user.RefreshTokens.Add(refreshToken);
+            await _userManager.UpdateAsync(user);
+
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(10),
+                HttpOnly = true
+            };
+            
+            Response.Cookies.Append("RefreshToken", refreshToken.Token, cookieOptions);
+        }
+        
         private UserDto CreateUserDto(User user)
         {
             return new UserDto
@@ -100,7 +148,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Username = user.UserName,
                 Image = user.Photos?.FirstOrDefault(photo => photo.IsMain)?.Url,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateAccessToken(user)
             };
         }
     }
