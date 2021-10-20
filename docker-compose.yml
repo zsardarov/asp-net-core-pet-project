@@ -6,8 +6,10 @@ services:
     ports:
       - "1434:1433"
     volumes:
-      - "/var/lib/docker/volumes/mssql_db/_data:/var/opt/mssql/data"
+      - api-mssql:/var/opt/mssql/data
     environment:
       SA_PASSWORD: "Secret_Password123"
       ACCEPT_EULA: "Y"
+volumes:
+  api-mssql:
 
