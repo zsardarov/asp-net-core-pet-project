@@ -26,7 +26,6 @@ namespace API.Extensions
             {
                 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 
-
                 string connStr;
                 
                 if (env == "Development")
