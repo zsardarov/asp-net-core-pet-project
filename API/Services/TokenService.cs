@@ -25,7 +25,7 @@ namespace API.Services
             return Generate(user, DateTime.Now.AddHours(1));
         }
 
-        public RefreshToken CreateFreshToken(User user)
+        public RefreshToken CreateRefreshToken(User user)
         {
             return new RefreshToken() {Token = Generate(user, DateTime.Now.AddDays(10))};
         }

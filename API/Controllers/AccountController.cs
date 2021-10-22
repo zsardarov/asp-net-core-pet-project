@@ -127,7 +127,7 @@ namespace API.Controllers
 
         private async Task SetRefreshToken(User user)
         {
-            var refreshToken = _tokenService.CreateFreshToken(user);
+            var refreshToken = _tokenService.CreateRefreshToken(user);
             
             user.RefreshTokens.Add(refreshToken);
             await _userManager.UpdateAsync(user);
