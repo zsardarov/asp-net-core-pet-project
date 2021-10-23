@@ -7,7 +7,7 @@ using Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace Tests.Cases
+namespace Tests.Integration
 {
     public class ActivitiesControllerTests : IntegrationTest
     {
@@ -20,7 +20,7 @@ namespace Tests.Cases
         {
             await AuthenticateAsync();
 
-            var response = await _client.GetAsync("api/activities");
+            var response = await Client.GetAsync("api/activities");
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             (await response.Content.ReadFromJsonAsync<List<Activity>>()).Should().BeEmpty();
@@ -31,9 +31,11 @@ namespace Tests.Cases
         {
             await AuthenticateAsync();
 
-            var createActivityResponse = await _client.PostAsJsonAsync("api/activities", new Activity
+            var id = Guid.NewGuid();
+
+            var createActivityResponse = await Client.PostAsJsonAsync("api/activities", new Activity
             {
-                Id = Guid.NewGuid(),
+                Id = id,
                 Title = "Test title",
                 Description = "Sample",
                 Category = "music",
@@ -44,10 +46,10 @@ namespace Tests.Cases
 
             createActivityResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var getActivityResponse = await _client.GetAsync("api/activities");
+            var getActivityResponse = await Client.GetAsync($"api/activities/{id}");
 
             getActivityResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            (await getActivityResponse.Content.ReadFromJsonAsync<List<Activity>>()).Should().NotBeEmpty();
+            (await getActivityResponse.Content.ReadFromJsonAsync<Activity>())?.Id.Should().Be(id);
         }
     }
 }

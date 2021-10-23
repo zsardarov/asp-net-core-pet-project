@@ -104,7 +104,7 @@ namespace API.Controllers
                 UserName = registerDto.Username
             };
 
-            var result = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)
             {

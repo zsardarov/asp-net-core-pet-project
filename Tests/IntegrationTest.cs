@@ -12,23 +12,23 @@ namespace Tests
 {
     public class IntegrationTest : IClassFixture<CustomWebApplicationFactory>, IDisposable
     {
-        protected readonly HttpClient _client;
+        protected readonly HttpClient Client;
         private readonly IServiceProvider _serviceProvider;
 
         protected IntegrationTest(CustomWebApplicationFactory fixture)
         {
-            _client = fixture.CreateClient();
+            Client = fixture.CreateClient();
             _serviceProvider = fixture.Services;
         }
         
         protected async Task AuthenticateAsync()
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetJwtAsync());
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetJwtAsync());
         }
         
         private async Task<string> GetJwtAsync()
         {
-            var response = await _client.PostAsJsonAsync("api/account/register", new RegisterDto()
+            var response = await Client.PostAsJsonAsync("api/account/register", new RegisterDto()
             {
                 Email = "user@test.com",
                 Username = "test",
